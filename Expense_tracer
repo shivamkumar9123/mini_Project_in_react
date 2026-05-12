@@ -1,0 +1,224 @@
+import { useState } from "react";
+import "./App.css";
+
+function App() {
+  const [text, setText] = useState("");
+  const [amount, setAmount] = useState("");
+  const [transactions, setTransactions] = useState([]);
+
+  const addTransaction = () => {
+    if (text.trim() === "" || amount === "") return;
+
+    const newTransaction = {
+      id: Date.now(),
+      text,
+      amount: Number(amount),
+    };
+
+    setTransactions([newTransaction, ...transactions]);
+    setText("");
+    setAmount("");
+  };
+
+  const balance = transactions.reduce((total, item) => total + item.amount, 0);
+
+  const income = transactions
+    .filter((item) => item.amount > 0)
+    .reduce((total, item) => total + item.amount, 0);
+
+  const expense = transactions
+    .filter((item) => item.amount < 0)
+    .reduce((total, item) => total + item.amount, 0);
+
+  return (
+    <div className="container">
+      <div className="card">
+        <h1>Expense Tracker</h1>
+
+        <div className="balance-box">
+          <h2>₹ {balance}</h2>
+          <p>Current Balance</p>
+        </div>
+
+        <div className="summary">
+          <div className="income">
+            <h3>Income</h3>
+            <p>₹ {income}</p>
+          </div>
+
+          <div className="expense">
+            <h3>Expense</h3>
+            <p>₹ {Math.abs(expense)}</p>
+          </div>
+        </div>
+
+        <div className="form">
+          <input
+            type="text"
+            placeholder="Description"
+            value={text}
+            onChange={(e) => setText(e.target.value)}
+          />
+
+          <input
+            type="number"
+            placeholder="Amount (+income / -expense)"
+            value={amount}
+            onChange={(e) => setAmount(e.target.value)}
+          />
+
+          <button onClick={addTransaction}>Add Transaction</button>
+        </div>
+
+        <h3 className="history-title">History</h3>
+
+        <ul>
+          {transactions.map((item) => (
+            <li
+              key={item.id}
+              className={item.amount > 0 ? "plus" : "minus"}
+            >
+              <span>{item.text}</span>
+              <span>₹ {item.amount}</span>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </div>
+  );
+}
+
+export default App;
+
+App.css Code
+Replace src/App.css with:
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: Arial, sans-serif;
+  background: linear-gradient(135deg, #1e293b, #0f172a);
+  min-height: 100vh;
+}
+
+.container {
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+}
+
+.card {
+  width: 100%;
+  max-width: 520px;
+  background: white;
+  border-radius: 16px;
+  padding: 30px;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+}
+
+h1 {
+  text-align: center;
+  color: #0f172a;
+  margin-bottom: 25px;
+}
+
+.balance-box {
+  background: #22c55e;
+  color: white;
+  padding: 22px;
+  border-radius: 12px;
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.balance-box h2 {
+  font-size: 34px;
+  margin-bottom: 6px;
+}
+
+.summary {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 15px;
+  margin-bottom: 25px;
+}
+
+.income,
+.expense {
+  padding: 18px;
+  border-radius: 12px;
+  text-align: center;
+}
+
+.income {
+  background: #dcfce7;
+  color: #166534;
+}
+
+.expense {
+  background: #fee2e2;
+  color: #991b1b;
+}
+
+.form input {
+  width: 100%;
+  padding: 12px;
+  margin-bottom: 12px;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  font-size: 15px;
+  outline: none;
+}
+
+.form button {
+  width: 100%;
+  padding: 13px;
+  background: #2563eb;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.form button:hover {
+  background: #1d4ed8;
+}
+
+.history-title {
+  margin: 25px 0 15px;
+  color: #0f172a;
+}
+
+ul {
+  list-style: none;
+  max-height: 260px;
+  overflow-y: auto;
+}
+
+li {
+  display: flex;
+  justify-content: space-between;
+  padding: 14px;
+  margin-bottom: 10px;
+  border-radius: 8px;
+  font-weight: 600;
+}
+
+.plus {
+  background: #ecfdf5;
+  color: #166534;
+  border-left: 5px solid #22c55e;
+}
+
+.minus {
+  background: #fef2f2;
+  color: #991b1b;
+  border-left: 5px solid #ef4444;
+}
